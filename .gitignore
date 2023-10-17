@@ -1,0 +1,18 @@
+#dev tools
+.idea/
+.vscode/
+
+#node output
+node_modules/
+build/
+tmp/
+
+#transpiling output
+dist/
+
+#testing output
+coverage/
+
+#environment files
+.env
+.env.test
