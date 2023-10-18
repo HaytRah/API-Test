@@ -22,13 +22,13 @@ const m_authenticate_user = ( req , res , next ) => {
             field = "Email"
             if(!m_valid_email_param(body.email)) {
                 msg = "Email format is invalid"
-                return
+                break;
             }
             console.log("Step 2")
             field = "password"
             if(!m_valid_password(body.password)) {
                 msg = "Password format is invalid. Must contain a number and a special character and be between 6 to 16 character"
-                return
+                break;
             }
             valid = false
         }
