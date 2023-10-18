@@ -19,7 +19,7 @@ auth_router.get('/', (req, res) => {
 })
 
 // Routes
-auth_router.post('/login', m_authenticate_user, c_login )
+auth_router.get('/login', m_authenticate_user, c_login )
 auth_router.post('/register', m_validate_user, c_register)
 auth_router.get('/users', c_get_users)
 auth_router.post('/user', c_get_user)

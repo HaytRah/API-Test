@@ -6,7 +6,7 @@
 */
 
 
-import { m_valid_email_param, m_valid_password, m_validate_fullname } from "./field.middleware.js";
+import { m_valid_email_param, m_valid_password, m_validate_empty, m_validate_name } from "./field.middleware.js";
 
 
 
@@ -14,25 +14,46 @@ import { m_valid_email_param, m_valid_password, m_validate_fullname } from "./fi
 const m_validate_user = ( req , res , next ) => {
     try{
         var valid = true
+        var field_valid = true
         var msg = ""
         var field = ""
-        // if statement with middleware functions that process if the user data entered are valid
-        if(!m_valid_email_param(req)) {
-            valid = false
-            var msg = "Email format is invalid"
-            var field = "Email"
+        const body = req.body
+        console.log(body)
+        // While loop with middleware functions that process if the user data entered are valid
+        while(valid){
+            field = 'email'
+            if(!m_valid_email_param(body[field])) {
+                msg = "Email format is invalid"
+                break;
+            }
+            field = 'password'
+            if(!m_valid_password(body[field])) {
+                msg = "Password format is invalid. Must contain a number and a special character and be between 6 to 16 character"
+                break;
+            }
+            field = 'first_name'
+            field_valid = m_validate_empty(body[field])
+            if(!field_valid){
+                msg = 'First name needs to have a value !'
+                break;
+            }
+            if(!m_validate_name(body[field])){
+                msg = "First name format is invalid"
+                break;
+            }
+            field = 'last_name'
+            field_valid = m_validate_empty(body[field])
+            if(!field_valid){
+                msg = 'Last name needs to have a value !'
+                break;
+            }
+            if(!m_validate_name(body[field])){
+                msg = "Last name format is invalid"
+                break;
+            }
+            valid = false;
         }
-        if(!m_valid_password(req)) {
-            valid = false
-            var msg = "Password format is invalid"
-            var field = "Password"
-        }
-        if(!m_validate_fullname(req, field)) {
-            valid = false
-            var msg = "Name format is invalid"
-            field = field
-        }
-        if(valid) {
+        if(msg === '') {
             next();
         } else {
             res.status(422).json({ message : msg , type: 'Failed' , data : [field]})
