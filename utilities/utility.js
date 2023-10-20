@@ -1,4 +1,6 @@
 
+import Jwt  from 'jsonwebtoken';
+
 /*
     This file contains all the utility/useful functions that can be used 
     anywhere on the code
@@ -47,4 +49,26 @@ const f_format_user = ( user ) => {
     }
     return default_user
 }
-export { f_make_date , f_make_http_code , f_hash_password , f_match_password , f_format_user , f_generate_empty_promise };
+
+//Function that creates a JWT Token to be used in the auth.service
+const f_create_token = (clean_user, secret) => {
+    const user = clean_user.email
+    const token = Jwt.sign(user, secret)
+    return {token : token}
+}
+
+//Function that will authenticate the newly created token
+const f_authenticate_token = (TOKEN, res) => {
+    const token = TOKEN
+    if (token == null) return res.sendStatus(401)
+    
+    //Built in Jwt function that veryfies if the Token was built using ACCESS_TOKEN_SECRET
+    Jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err) => {
+        if (err) {
+            return false
+        } 
+    })
+    return true
+}
+
+export { f_make_date , f_make_http_code , f_hash_password , f_match_password , f_format_user , f_generate_empty_promise, f_create_token, f_authenticate_token };

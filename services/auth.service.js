@@ -1,4 +1,6 @@
 
+import Jwt  from 'jsonwebtoken';
+
 /*
     This file is the authentication service that will communicate
     with the database and send back the data to the controller
@@ -8,7 +10,7 @@
 
 
 import userSchema from '../models/user.js';
-import { f_format_user, f_match_password, f_hash_password } from '../utilities/utility.js';
+import { f_format_user, f_match_password, f_hash_password, f_create_token, f_authenticate_token } from '../utilities/utility.js';
 
 // Service d'authentication pour le login
 const s_login = async( promise , user ) => {
@@ -29,6 +31,18 @@ const s_login = async( promise , user ) => {
             const clean_user = f_format_user(find_user[0])
             promise.data = clean_user
             console.log('Password match ' , promise)
+
+
+            //Secret object from interface
+            const secret = process.env.ACCESS_TOKEN_SECRET
+            const authorization_token = f_create_token(clean_user, secret)
+            console.log(authorization_token)
+            if(f_authenticate_token(authorization_token, promise)) {
+                console.log("Token Validated")
+            } else {
+                console.log("Invalid Token")
+            }
+
             return promise
             
         }else{
